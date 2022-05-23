@@ -1,6 +1,6 @@
 
 User
-    id: userID
+    id: number
     username: text
 
 Comment
@@ -15,6 +15,7 @@ Comment
     deleted: boolean = false
 
 Thread
+    id: number
     title: text
     description: text
     dateCreated: date
@@ -27,53 +28,53 @@ Thread
 
 Home page:
     GET
-    home/threads?pageNumber={page number}&threadsPerPage={number of threads per page}
+    /threads?pageNumber={page number}&threadsPerPage={number of threads per page}
     - return most recent 25 threads. comments will be empty.
 
 Thread out
     GET
-    /thread/{threadID}/comments?startIndex={start index}&count={number of comments to return}
+    /threads/{threadID}/comments?startIndex={start index}&count={number of comments to return}
     - return up to `count` comments on thread at start index with length of count
     v2: &replyCount={number of replies per comment to return}
 
     GET
-    /comment/{commentID}/replies?startIndex={start index}&count={number of replies to return}
+    /comments/{commentID}/replies?startIndex={start index}&count={number of replies to return}
     - return up to x amount of comments' replies at startindex
     v2: &replyReplyCount={number of replies per reply to return}
 
 Thread in
-    POST /thread/{threadID}/comment
+    POST /threads/{threadID}/comments
         parameters:
             text: string
             authToken: token
         create: a new thread
         return: the Comment schema version of the comment posted
 
-    POST /comment/{commentID}/reply
+    POST /comments/{commentID}/reply
         parameters:
             text: string
             authToken: token
         create: the new reply
         return: the Comment schema version of the reply posted
 
-    DELETE /comment/{commentID}
+    DELETE /comments/{commentID}
         parameters:
             authToken: token
         set: comment `deleted` property set to true
         return: success!
 
-    POST /thread/{thread ID}/upvote
+    POST /threads/{thread ID}/upvote
         parameters:
             upvote?: boolean
             authToken: token
 
-    POST /comment/{comment ID}/upvote
+    POST /comments/{comment ID}/upvote
         parameters:
             upvote?: boolean
             authToken: token
 
 New Thread
-    POST /thread
+    POST /threads
         parameters:
             title: text
             description: text
