@@ -298,6 +298,8 @@ paths:
     delete:
       tags:
         - Comments
+      security:
+        - bearerAuth: []
       description:
         Delete specified comment
       operationId: deleteComment

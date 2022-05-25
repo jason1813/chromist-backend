@@ -50,7 +50,7 @@ Thread in
         create: a new thread
         return: the Comment schema version of the comment posted
 
-    POST /comments/{commentID}/reply
+    POST /comments/{commentID}/replies
         parameters:
             text: string
             authToken: token
@@ -82,19 +82,19 @@ New Thread
         return: the Thread schema version of the thread posted
 
 Sign in
-    Post /auth/signup
+    Post /auth/tokens
         parameters:
             username: string
             password: hashed string
         return: JWT
 
-    POST /auth/login
+    GET /auth/tokens
         parameters:
             username: string
             password: hashed string
         return: JWT
 
-    DELETE /auth/logout
+    DELETE /auth/tokens
         parameters
             authToken (or refresh token?): token
-        return: JWT? (refresh token?)
+        return: User successfully logged out!
