@@ -506,6 +506,8 @@ components:
         upvoteScore:
           type: integer
           format: int32
+        userUpvoted:
+          $ref: '#/components/schemas/Upvote'
         # comments:
         #   type: array
         #   items:
