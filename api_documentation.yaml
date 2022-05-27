@@ -175,6 +175,14 @@ paths:
       description: 
         Set upvote value on thread
       operationId: upvoteThread
+      parameters:
+      - name: threadID
+        in: path
+        description: ID of thread to add upvote to
+        required: true
+        schema:
+          type: integer
+          format: int64
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -289,6 +297,14 @@ paths:
       description: 
         Set upvote value on comment
       operationId: upvoteComment
+      parameters:
+      - name: commentID
+        in: path
+        description: ID of comment to add upvote to
+        required: true
+        schema:
+          type: integer
+          format: int64
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -339,8 +355,18 @@ paths:
       tags:
         - Auth
       description:
-        Sign up a new user
+        Sign up or sign in a new user
       operationId: signupUser
+      parameters:
+        - name: action
+          in: query
+          description: action to perform (signup or login)
+          required: true
+          schema:
+            type: string
+            enum:
+              - signup
+              - login
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -363,42 +389,6 @@ paths:
                 type: object
                 properties:
                   newUser:
-                    $ref: '#/components/schemas/User'
-                  token:
-                    type: string
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-    get:
-      tags:
-        - Auth
-      description:
-        Log user in
-      operationId: loginUser
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                hashedPassword:
-                  type: string
-        required: true
-      responses:
-        '200':
-          description: User logged in!
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  User:
                     $ref: '#/components/schemas/User'
                   token:
                     type: string
