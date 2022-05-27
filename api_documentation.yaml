@@ -442,7 +442,6 @@ components:
         - dateCreated
         - author
         - content
-        - replies
         - replyCount
         - deleted
         - upvoteScore
@@ -457,10 +456,10 @@ components:
           $ref: '#/components/schemas/User'
         text:
           type: string
-        replies:
-          type: array
-          items:
-            $ref: '#/components/schemas/Comment'
+        # replies:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/Comment'
         replyCount:
           type: integer
           format: int32
@@ -501,10 +500,10 @@ components:
         upvoteScore:
           type: integer
           format: int32
-        comments:
-          type: array
-          items:
-            $ref: '#/components/schemas/Comment'
+        # comments:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/Comment'
 
     Upvote:
       type: object
