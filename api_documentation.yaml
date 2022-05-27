@@ -3,7 +3,7 @@ info:
   title: Chromist API
   version: '1.0'
 servers:
-  - url: https://api.server.test/v1
+  - url: http://0.0.0.0:3001/v1
 
 paths:
   /threads:
@@ -90,6 +90,13 @@ paths:
         Return the comments on a given thread
       operationId: findCommentsOnThread
       parameters:
+        - name: threadID
+          in: path
+          description: ID of thread to add comment to
+          required: true
+          schema:
+            type: integer
+            format: int64
         - name: startIndex
           in: query
           description: The start index from where to grab comments from
@@ -172,7 +179,7 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/upvote'
+              $ref: '#/components/schemas/Upvote'
       responses:
         '200':
           description: Thread successfully voted!
@@ -283,7 +290,7 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/upvote'
+              $ref: '#/components/schemas/Upvote'
       responses:
         '200':
           description: Comment successfully voted!
@@ -453,7 +460,7 @@ components:
         replies:
           type: array
           items:
-            $ref: '#/components/schemas/User'
+            $ref: '#/components/schemas/Comment'
         replyCount:
           type: integer
           format: int32
@@ -494,8 +501,12 @@ components:
         upvoteScore:
           type: integer
           format: int32
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
 
-    upvote:
+    Upvote:
       type: object
       properties:
         upvoteSelection: 
