@@ -179,7 +179,10 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Upvote'
+              type: object
+              properties:
+                upvote:
+                  $ref: '#/components/schemas/Upvote'
       responses:
         '200':
           description: Thread successfully voted!
@@ -290,7 +293,10 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Upvote'
+              type: object
+              properties:
+                upvote:
+                  $ref: '#/components/schemas/Upvote'
       responses:
         '200':
           description: Comment successfully voted!
@@ -456,20 +462,20 @@ components:
           $ref: '#/components/schemas/User'
         text:
           type: string
+        replyCount:
+          type: integer
+          format: int32
         # replies:
         #   type: array
         #   items:
         #     $ref: '#/components/schemas/Comment'
-        replyCount:
-          type: integer
-          format: int32
         deleted:
           type: boolean
         upvoteScore:
           type: integer
           format: int32
         userUpvoted:
-          type: boolean
+          $ref: '#/components/schemas/Upvote'
       
     Thread:
       type: object
@@ -506,14 +512,11 @@ components:
         #     $ref: '#/components/schemas/Comment'
 
     Upvote:
-      type: object
-      properties:
-        upvoteSelection: 
-          type: string
-          enum:
-            - up
-            - down
-            - neutral
+      type: string
+      enum:
+        - up
+        - down
+        - neutral
 
     Error:
       type: object
