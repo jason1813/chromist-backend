@@ -11,7 +11,7 @@ paths:
       tags:
         - Threads
       description:
-        Return the threads on specified page number with specified amount of threads to return.
+        Return the threads on specified page number with specified amount of threads to return (if token included in request, include userupvote value)
       operationId: findThreads
       parameters:
         - name: pageNumber
@@ -39,12 +39,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Thread'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized (if auth token sent and not valid)
+        '500':
+          description: Internal Server Error
 
     post:
       tags:
@@ -75,19 +75,19 @@ paths:
               schema:
                 schema:
                 $ref: '#/components/schemas/Thread'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
 
   /threads/{threadID}/comments:
     get:
       tags:
         - Threads
       description:
-        Return the comments on a given thread
+        Return the comments on a given thread (if token included in request, add userupvote value)
       operationId: findCommentsOnThread
       parameters:
         - name: threadID
@@ -120,12 +120,13 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized (if auth token sent and not valid)
+        '500':
+          description: Internal Server Error
+
     post:
       tags:
         - Threads
@@ -159,12 +160,12 @@ paths:
               schema:
                 schema:
                 $ref: '#/components/schemas/Comment'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
 
   /threads/{threadID}/upvote:
     post:
@@ -194,19 +195,19 @@ paths:
       responses:
         '200':
           description: Thread successfully voted!
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
 
   /comments/{commentID}/replies:
     get:
       tags:
         - Comments
       description:
-        Return up to a specified amount of replies on a comment starting at specified start index.
+        Return up to a specified amount of replies on a comment starting at specified start index (if token included in request, include userupvote values)
       operationId: findReplies
       parameters:
         - name: commentID
@@ -243,12 +244,13 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized (if auth token sent and not valid)
+        '500':
+          description: Internal Server Error
+
     post:
       tags:
         - Comments
@@ -281,12 +283,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Comment'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
 
   /comments/{commentID}/upvote:
     post:
@@ -316,12 +318,12 @@ paths:
       responses:
         '200':
           description: Comment successfully voted!
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
 
   /comments/{commentID}:
     delete:
@@ -343,12 +345,12 @@ paths:
       responses:
         '200':
           description: Comment successfully deleted!
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
 
   /auth/tokens:
     post:
@@ -382,7 +384,7 @@ paths:
         required: true
       responses:
         '200':
-          description: New user successfully created!
+          description: User logged in successfully!
           content:
             application/json:
               schema:
@@ -392,12 +394,25 @@ paths:
                     $ref: '#/components/schemas/User'
                   token:
                     type: string
-        default:
-          description: unexpected error
+        '201':
+          description: New user created successfully!
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                type: object
+                properties:
+                  newUser:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Login credentials are invalid
+        '409':
+          description: Username already taken
+        '500':
+          description: Internal Server Error
 
     delete:
       tags:
@@ -410,12 +425,6 @@ paths:
       responses:
         '200':
           description: User logged out successfully
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
 components:
   schemas:
@@ -509,18 +518,6 @@ components:
         - up
         - down
         - neutral
-
-    Error:
-      type: object
-      required:
-        - code
-        - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
 
   securitySchemes:
     bearerAuth:
