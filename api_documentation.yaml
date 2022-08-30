@@ -11,7 +11,7 @@ paths:
       tags:
         - Threads
       description:
-        Return the threads on specified page number with specified amount of threads to return (if token included in request, include userupvote value)
+        Return the threads on specified page number with specified amount of threads to return (if token included in request, include voteStatus value)
       operationId: findThreads
       parameters:
         - name: pageNumber
@@ -87,7 +87,7 @@ paths:
       tags:
         - Threads
       description:
-        Return the comments on a given thread (if token included in request, add userupvote value)
+        Return the comments on a given thread (if token included in request, add voteStatus value)
       operationId: findCommentsOnThread
       parameters:
         - name: threadID
@@ -167,19 +167,19 @@ paths:
         '500':
           description: Internal Server Error
 
-  /threads/{threadID}/upvote:
+  /threads/{threadID}/voteStatus:
     post:
       tags:
         - Threads
       security:
         - bearerAuth: []
       description: 
-        Set upvote value on thread
-      operationId: upvoteThread
+        Set voteStatus value on thread
+      operationId: voteStatusThread
       parameters:
       - name: threadID
         in: path
-        description: ID of thread to add upvote to
+        description: ID of thread to add voteStatus to
         required: true
         schema:
           type: integer
@@ -190,8 +190,8 @@ paths:
             schema:
               type: object
               properties:
-                upvote:
-                  $ref: '#/components/schemas/Upvote'
+                voteStatus:
+                  $ref: '#/components/schemas/VoteStatus'
       responses:
         '200':
           description: Thread successfully voted!
@@ -207,7 +207,7 @@ paths:
       tags:
         - Comments
       description:
-        Return up to a specified amount of replies on a comment starting at specified start index (if token included in request, include userupvote values)
+        Return up to a specified amount of replies on a comment starting at specified start index (if token included in request, include user voteStatus values)
       operationId: findReplies
       parameters:
         - name: commentID
@@ -290,19 +290,19 @@ paths:
         '500':
           description: Internal Server Error
 
-  /comments/{commentID}/upvote:
+  /comments/{commentID}/voteStatus:
     post:
       tags:
         - Comments
       security:
         - bearerAuth: []
       description: 
-        Set upvote value on comment
-      operationId: upvoteComment
+        Set voteStatus value on comment
+      operationId: voteStatusComment
       parameters:
       - name: commentID
         in: path
-        description: ID of comment to add upvote to
+        description: ID of comment to add voteStatus to
         required: true
         schema:
           type: integer
@@ -313,8 +313,8 @@ paths:
             schema:
               type: object
               properties:
-                upvote:
-                  $ref: '#/components/schemas/Upvote'
+                voteStatus:
+                  $ref: '#/components/schemas/VoteStatus'
       responses:
         '200':
           description: Comment successfully voted!
@@ -453,7 +453,7 @@ components:
         - content
         - replyCount
         - deleted
-        - upvoteScore
+        - voteScore
       properties:
         id:
           type: integer
@@ -474,11 +474,11 @@ components:
         #     $ref: '#/components/schemas/Comment'
         deleted:
           type: boolean
-        upvoteScore:
+        voteScore:
           type: integer
           format: int32
-        userUpvoted:
-          $ref: '#/components/schemas/Upvote'
+        voteStatus:
+          $ref: '#/components/schemas/VoteStatus'
       
     Thread:
       type: object
@@ -489,7 +489,7 @@ components:
         - title
         - description
         - numberOfComments
-        - upvoteScore
+        - voteScore
       properties:
         id:
           type: integer
@@ -506,17 +506,17 @@ components:
         numberOfComments:
           type: integer
           format: int32
-        upvoteScore:
+        voteScore:
           type: integer
           format: int32
-        userUpvoted:
-          $ref: '#/components/schemas/Upvote'
+        voteStatus:
+          $ref: '#/components/schemas/VoteStatus'
         # comments:
         #   type: array
         #   items:
         #     $ref: '#/components/schemas/Comment'
 
-    Upvote:
+    VoteStatus:
       type: string
       enum:
         - up
