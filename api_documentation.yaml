@@ -82,6 +82,35 @@ paths:
         '500':
           description: Internal Server Error
 
+  /threads/{threadID}:
+    get:
+      tags:
+        - Threads
+      description:
+        Return thread for specified thread ID
+      operationId: findThread
+      parameters:
+        - name: threadID
+          in: path
+          description: ID of thread to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: thread response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Thread'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
   /threads/{threadID}/comments:
     get:
       tags:
