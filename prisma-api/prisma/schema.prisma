@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int     @id @default(autoincrement())
+  username      String  @unique
+  password      String
+  threads       Thread[]
+  comments      Comment[]
+  commentVotes  CommentVote[]
+}
+
+model Thread {
+  id            Int     @id @default(autoincrement())
+  dateCreated   DateTime
+  author        User    @relation(fields: [authorId], references: [id])
+  authorId      Int
+  title         String
+  description   String?
+  deleted       Boolean @default(false)
+  replies       Comment[] @relation("Thread Replies")
+}
+
+model Comment {
+  id            Int     @id @default(autoincrement())
+  date          DateTime
+  author        User    @relation(fields: [authorId], references: [id])
+  authorId      Int
+  text          String
+  deleted       Boolean @default(false)
+  thread        Thread @relation("Thread Replies", fields: [threadId], references: [id])
+  threadId      Int
+
+  replies       Comment[] @relation("Comment Replies")
+  comment       Comment? @relation("Comment Replies", fields: [commentId], references: [id])
+  commentId     Int
+}
+
+model VoteStatus {
+  id            Int     @id @default(autoincrement())
+  status        String
+  CommentVotes  CommentVote[]
+}
+
+model CommentVote {
+  id            Int     @id @default(autoincrement())
+  user          User    @relation(fields: [userId], references: [id])
+  userId        Int
+
+  vote          VoteStatus @relation(fields: [voteStatusId], references: [id])
+  voteStatusId  Int
+}
