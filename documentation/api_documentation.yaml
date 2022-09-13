@@ -407,7 +407,7 @@ paths:
                 username:
                   description: username of the new user
                   type: string
-                hashedPassword:
+                password:
                   description: hashed password for the new user
                   type: string
         required: true

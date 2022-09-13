@@ -1,12 +1,35 @@
 
 import { PrismaClient } from '@prisma/client'
 import express from 'express'
+import bcrypt from 'bcrypt'
 
 const prisma = new PrismaClient()
 const app = express()
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
+})
+
+app.post(`/auth/tokens`, async (req, res) => {
+  const { action } = req.query
+  const { username, password } = req.body
+
+  // const postData = posts?.map((post: Prisma.PostCreateInput) => {
+  //   return { title: post?.title, content: post?.content }
+  // })
+
+  // bcrypt.hash(password, 10, function(err, hash) {
+  //   // Store hash in your password DB.
+  // });
+  const salt = await bcrypt.genSalt(10)
+  const hashedPassword = await bcrypt.hash(password, salt)
+
+  const user = { username: username, password: hashedPassword }
+
+  const result = await prisma.user.create({
+    data: user
+  })
+  res.json(result)
 })
 
 // async function main() {
