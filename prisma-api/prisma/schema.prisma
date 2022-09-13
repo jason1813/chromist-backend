@@ -6,56 +6,83 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            Int     @id @default(autoincrement())
-  username      String  @unique
-  password      String
-  threads       Thread[]
-  comments      Comment[]
-  commentVotes  CommentVote[]
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
+
+  threads      Thread[]
+  comments     Comment[]
+  commentVotes CommentVote[]
+  threadVotes  ThreadVote[]
 }
 
 model Thread {
-  id            Int     @id @default(autoincrement())
-  dateCreated   DateTime
-  author        User    @relation(fields: [authorId], references: [id])
-  authorId      Int
-  title         String
-  description   String?
-  deleted       Boolean @default(false)
-  replies       Comment[] @relation("Thread Replies")
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  title       String
+  description String?
+  deleted     Boolean  @default(false)
+
+  author   User @relation(fields: [authorId], references: [id])
+  authorId Int
+
+  replies     Comment[]
+  threadVotes ThreadVote[]
 }
 
 model Comment {
-  id            Int     @id @default(autoincrement())
-  date          DateTime
-  author        User    @relation(fields: [authorId], references: [id])
-  authorId      Int
-  text          String
-  deleted       Boolean @default(false)
-  thread        Thread @relation("Thread Replies", fields: [threadId], references: [id])
-  threadId      Int
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  text      String
+  deleted   Boolean  @default(false)
 
-  replies       Comment[] @relation("Comment Replies")
-  comment       Comment? @relation("Comment Replies", fields: [commentId], references: [id])
-  commentId     Int
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  thread    Thread   @relation(fields: [threadId], references: [id])
+  threadId  Int
+  comment   Comment? @relation("Comment Replies", fields: [commentId], references: [id])
+  commentId Int
+
+  replies Comment[]     @relation("Comment Replies")
+  votes   CommentVote[]
 }
 
-model VoteStatus {
-  id            Int     @id @default(autoincrement())
-  status        String
-  CommentVotes  CommentVote[]
-}
+// model VoteStatus {
+//   id     Int    @id @default(autoincrement())
+//   status String
+
+//   CommentVotes CommentVote[]
+//   ThreadVotes  ThreadVote[]
+// }
 
 model CommentVote {
-  id            Int     @id @default(autoincrement())
-  user          User    @relation(fields: [userId], references: [id])
-  userId        Int
+  id Int @id @default(autoincrement())
 
-  vote          VoteStatus @relation(fields: [voteStatusId], references: [id])
-  voteStatusId  Int
+  user      User       @relation(fields: [userId], references: [id])
+  userId    Int
+  comment   Comment    @relation(fields: [commentId], references: [id])
+  commentId Int
+  vote      VoteStatus // @relation(fields: [voteStatusId], references: [id])
+  // voteStatusId Int
+}
+
+model ThreadVote {
+  id Int @id @default(autoincrement())
+
+  user     User       @relation(fields: [userId], references: [id])
+  userId   Int
+  thread   Thread     @relation(fields: [threadId], references: [id])
+  threadId Int
+  vote     VoteStatus // @relation(fields: [voteStatusId], references: [id])
+  // voteStatusId Int
+}
+
+enum VoteStatus {
+  Up
+  Down
 }
