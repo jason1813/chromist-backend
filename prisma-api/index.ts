@@ -1,34 +1,46 @@
 
 import { PrismaClient } from '@prisma/client'
-import express from 'express'
+import express, { ErrorRequestHandler } from 'express'
 import bcrypt from 'bcrypt'
+// import bodyParser from 'body-parser'
 
 const prisma = new PrismaClient()
 const app = express()
+app.use(express.json())
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.post(`/auth/tokens`, async (req, res) => {
+app.post(`/auth/tokens`, async (req, res, next) => {
   const { action } = req.query
   const { username, password } = req.body
 
-  // const postData = posts?.map((post: Prisma.PostCreateInput) => {
-  //   return { title: post?.title, content: post?.content }
-  // })
-
-  // bcrypt.hash(password, 10, function(err, hash) {
-  //   // Store hash in your password DB.
-  // });
-  const salt = await bcrypt.genSalt(10)
-  const hashedPassword = await bcrypt.hash(password, salt)
+  const hashedPassword = await bcrypt.hash(password, 10)
 
   const user = { username: username, password: hashedPassword }
 
+  // const userExists = prisma.user.findFirst({
+  //   where: {
+  //     username: username
+  //   }
+  // }) != null;
+
+  // console.log(`user exists = ${userExists}`)
+
+  // try {
+  //   const result = await prisma.user.create({
+  //     data: user
+  //   })
+  //   res.json(result)
+  // } catch (e) {
+  //   res.send(e)
+  // }
+
   const result = await prisma.user.create({
     data: user
-  })
+  }).catch(next);
+
   res.json(result)
 })
 
@@ -67,6 +79,10 @@ app.post(`/auth/tokens`, async (req, res) => {
 //         await prisma.$disconnect()
 //         process.exit(1)
 //     })
+
+app.use(((error, req, res, next) => {
+  return res.status(500).json({ error: error.toString() });
+}) as ErrorRequestHandler);
 
 const port = 3001;
 app.listen(port, () => {
