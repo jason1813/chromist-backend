@@ -19,6 +19,8 @@ model User {
   comments     Comment[]
   commentVotes CommentVote[]
   threadVotes  ThreadVote[]
+  
+  @@map("users")
 }
 
 model Thread {
@@ -33,6 +35,8 @@ model Thread {
 
   replies     Comment[]
   threadVotes ThreadVote[]
+
+  @@map("threads")
 }
 
 model Comment {
@@ -50,15 +54,9 @@ model Comment {
 
   replies Comment[]     @relation("Comment Replies")
   votes   CommentVote[]
+
+  @@map("comments")
 }
-
-// model VoteStatus {
-//   id     Int    @id @default(autoincrement())
-//   status String
-
-//   CommentVotes CommentVote[]
-//   ThreadVotes  ThreadVote[]
-// }
 
 model CommentVote {
   id Int @id @default(autoincrement())
@@ -67,8 +65,9 @@ model CommentVote {
   userId    Int
   comment   Comment    @relation(fields: [commentId], references: [id])
   commentId Int
-  vote      VoteStatus // @relation(fields: [voteStatusId], references: [id])
-  // voteStatusId Int
+  vote      VoteStatus
+
+  @@map("commentvotes")
 }
 
 model ThreadVote {
@@ -78,8 +77,9 @@ model ThreadVote {
   userId   Int
   thread   Thread     @relation(fields: [threadId], references: [id])
   threadId Int
-  vote     VoteStatus // @relation(fields: [voteStatusId], references: [id])
-  // voteStatusId Int
+  vote     VoteStatus
+
+  @@map("threadvotes")
 }
 
 enum VoteStatus {
