@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ThreadModule } from './thread/thread.module';
@@ -8,6 +10,18 @@ import { CommentvoteModule } from './commentvote/commentvote.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [AuthModule, UserModule, ThreadModule, CommentModule, ThreadvoteModule, CommentvoteModule, PrismaModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
+    AuthModule,
+    UserModule,
+    ThreadModule,
+    CommentModule,
+    ThreadvoteModule,
+    CommentvoteModule,
+    PrismaModule
+  ],
 })
+
 export class AppModule {}
