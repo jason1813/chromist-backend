@@ -21,7 +21,6 @@ import { PrismaModule } from './prisma/prisma.module';
     ThreadvoteModule,
     CommentvoteModule,
     PrismaModule
-  ],
+  ]
 })
-
 export class AppModule {}

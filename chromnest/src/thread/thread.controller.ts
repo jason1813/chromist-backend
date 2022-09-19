@@ -7,11 +7,11 @@ import { ThreadBodyDto } from './thread_dto';
 
 @Controller('threads')
 export class ThreadController {
-    constructor(private threadService: ThreadService) {}
+  constructor(private threadService: ThreadService) {}
 
-    @UseGuards(JwtGuard)
-    @Post()
-    postThread(@Body() body: ThreadBodyDto, @GetUser() user: User) {
-        return this.threadService.createThread(body, user);
-    }
+  @UseGuards(JwtGuard)
+  @Post()
+  postThread(@Body() body: ThreadBodyDto, @GetUser() user: User) {
+    return this.threadService.createThread(body, user);
+  }
 }

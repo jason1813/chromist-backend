@@ -1,1 +1,1 @@
-export * from './thread.dto'
+export * from './thread.dto';

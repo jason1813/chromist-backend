@@ -13,7 +13,7 @@ export class AuthService {
     private jwt: JwtService,
     private config: ConfigService
   ) {}
-  
+
   async signup(body: AuthBodyDto) {
     const hashedPassword = await bcrypt.hash(body.password, 10);
 
@@ -26,11 +26,10 @@ export class AuthService {
       });
 
       return this.signToken(user.id, user.username);
-
-    } catch(error) {
+    } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new ForbiddenException('Credentials taken')
+          throw new ForbiddenException('Credentials taken');
         }
       }
       throw error;
@@ -42,38 +41,39 @@ export class AuthService {
       where: {
         username: body.username
       }
-    })
+    });
 
     if (!user) {
-      throw new ForbiddenException('Credentials incorrect')
+      throw new ForbiddenException('Credentials incorrect');
     }
 
-    const pwMatches = await bcrypt.compare (
-      body.password, user.password
-    )
+    const pwMatches = await bcrypt.compare(body.password, user.password);
 
     if (!pwMatches) {
-      throw new ForbiddenException('Credentials incorrect')
+      throw new ForbiddenException('Credentials incorrect');
     }
 
     return this.signToken(user.id, user.username);
   }
 
-  async signToken(userId: number, username: string): Promise<{access_token: string}> {
-    const payload = { 
+  async signToken(
+    userId: number,
+    username: string
+  ): Promise<{ access_token: string }> {
+    const payload = {
       sub: userId,
       username
-    }
+    };
 
     const secret = this.config.get('JWT_SECRET');
 
     const token = await this.jwt.signAsync(payload, {
       expiresIn: '60m',
       secret: secret
-    })
+    });
 
     return {
       access_token: token
-    }
+    };
   }
 }

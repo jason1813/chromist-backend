@@ -1,25 +1,25 @@
-import { Thread, User, VoteStatus } from "@prisma/client";
-import { IsNotEmpty, IsString } from "class-validator";
+import { Thread, User, VoteStatus } from '@prisma/client';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 class ThreadBodyDto {
-    @IsString()
-    @IsNotEmpty()
-    title: string;
+  @IsString()
+  @IsNotEmpty()
+  title: string;
 
-    @IsString()
-    @IsNotEmpty()
-    description: string;
+  @IsString()
+  @IsNotEmpty()
+  description: string;
 }
 
 enum VoteStatusNeutral {
-    neutral = 'neutral'
+  neutral = 'neutral'
 }
 
 interface ThreadReturnDto extends Thread {
-    author: User,
-    numberOfComments: number,
-    voteScore: number,
-    voteStatus: VoteStatus | VoteStatusNeutral
+  author: User;
+  numberOfComments: number;
+  voteScore: number;
+  voteStatus: VoteStatus | VoteStatusNeutral;
 }
 
-export { ThreadBodyDto, ThreadReturnDto, VoteStatusNeutral }
+export { ThreadBodyDto, ThreadReturnDto, VoteStatusNeutral };
