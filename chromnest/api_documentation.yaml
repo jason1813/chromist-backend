@@ -1,0 +1,559 @@
+openapi: '3.0.2'
+info:
+  title: Chromist API
+  version: '1.0'
+servers:
+  - url: http://0.0.0.0:3001/v1
+
+paths:
+  /threads:
+    get:
+      tags:
+        - Threads
+      description:
+        Return the threads on specified page number with specified amount of threads to return (if token included in request, include voteStatus value)
+      operationId: findThreads
+      parameters:
+        - name: pageNumber
+          in: query
+          description: The page number of which to grab threads from
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: threadsPerPage
+          in: query
+          description: The amount of threads to be shown on each page (max of 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            maximum: 100
+            minimum: 1
+      responses:
+        '200':
+          description: Threads response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Thread'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized (if auth token sent and not valid)
+        '500':
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Threads
+      security:
+        - bearerAuth: []
+      description:
+        Post a new thread
+      operationId: postThread
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                title:
+                  description: Text for the title of the new thread
+                  type: string
+                description:
+                  description: Text for the description of the new thread
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: new thread response
+          content:
+            application/json:
+              schema:
+                schema:
+                $ref: '#/components/schemas/Thread'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+  /threads/{threadID}:
+    get:
+      tags:
+        - Threads
+      description:
+        Return thread for specified thread ID
+      operationId: findThread
+      parameters:
+        - name: threadID
+          in: path
+          description: ID of thread to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: thread response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Thread'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+  /threads/{threadID}/comments:
+    get:
+      tags:
+        - Threads
+      description:
+        Return the comments on a given thread (if token included in request, add voteStatus value)
+      operationId: findCommentsOnThread
+      parameters:
+        - name: threadID
+          in: path
+          description: ID of thread to add comment to
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: startIndex
+          in: query
+          description: The start index from where to grab comments from
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: count
+          in: query
+          description: The number of comments to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: comments response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized (if auth token sent and not valid)
+        '500':
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Threads
+      security:
+        - bearerAuth: []
+      description:
+        Post a new comment on a thread
+      operationId: postComment
+      parameters:
+      - name: threadID
+        in: path
+        description: ID of thread to add comment to
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                text:
+                  description: Text for comment to add to the thread
+                  type: string
+      responses:
+        '200':
+          description: comment response
+          content:
+            application/json:
+              schema:
+                schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+  /threads/{threadID}/voteStatus:
+    post:
+      tags:
+        - Threads
+      security:
+        - bearerAuth: []
+      description: 
+        Set voteStatus value on thread
+      operationId: voteStatusThread
+      parameters:
+      - name: threadID
+        in: path
+        description: ID of thread to add voteStatus to
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                voteStatus:
+                  $ref: '#/components/schemas/VoteStatus'
+      responses:
+        '200':
+          description: Thread successfully voted!
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+  /comments/{commentID}/replies:
+    get:
+      tags:
+        - Comments
+      description:
+        Return up to a specified amount of replies on a comment starting at specified start index (if token included in request, include user voteStatus values)
+      operationId: findReplies
+      parameters:
+        - name: commentID
+          in: path
+          description: ID of comment to get replies from
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: startIndex
+          in: query
+          description: first index for which replies on the comment to grab from
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: count
+          in: query
+          description: The amount of replies to pull (max = 20)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            maximum: 20
+            minimum: 1
+            default: 5
+      responses:
+        '200':
+          description: replies response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized (if auth token sent and not valid)
+        '500':
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Comments
+      security:
+        - bearerAuth: []
+      description:
+        Post a new reply on a comment
+      operationId: postReply
+      parameters:
+      - name: commentID
+        in: path
+        description: ID of comment to add reply to
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                text:
+                  description: Text for reply to add to the comment
+                  type: string
+      responses:
+        '200':
+          description: reply response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+  /comments/{commentID}/voteStatus:
+    post:
+      tags:
+        - Comments
+      security:
+        - bearerAuth: []
+      description: 
+        Set voteStatus value on comment
+      operationId: voteStatusComment
+      parameters:
+      - name: commentID
+        in: path
+        description: ID of comment to add voteStatus to
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                voteStatus:
+                  $ref: '#/components/schemas/VoteStatus'
+      responses:
+        '200':
+          description: Comment successfully voted!
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+  /comments/{commentID}:
+    delete:
+      tags:
+        - Comments
+      security:
+        - bearerAuth: []
+      description:
+        Delete specified comment
+      operationId: deleteComment
+      parameters:
+        - name: commentID
+          in: path
+          description: ID of comment to terminate
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Comment successfully deleted!
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+  /auth/tokens:
+    post:
+      tags:
+        - Auth
+      description:
+        Sign up or sign in a new user
+      operationId: signupUser
+      parameters:
+        - name: action
+          in: query
+          description: action to perform (signup or login)
+          required: true
+          schema:
+            type: string
+            enum:
+              - signup
+              - login
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  description: username of the new user
+                  type: string
+                password:
+                  description: hashed password for the new user
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: User logged in successfully!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  newUser:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+        '201':
+          description: New user created successfully!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  newUser:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Login credentials are invalid
+        '409':
+          description: Username already taken
+        '500':
+          description: Internal Server Error
+
+    delete:
+      tags:
+        - Auth
+      security:
+      - bearerAuth: []
+      description:
+        Log user out
+      operationId: logoutUser
+      responses:
+        '200':
+          description: User logged out successfully
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - username
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+
+    Comment:
+      type: object
+      required:
+        - id
+        - dateCreated
+        - author
+        - content
+        - replyCount
+        - deleted
+        - voteScore
+      properties:
+        id:
+          type: integer
+          format: int64
+        dateCreated:
+          type: string
+          format: date-time
+        author:
+          $ref: '#/components/schemas/User'
+        text:
+          type: string
+        replyCount:
+          type: integer
+          format: int32
+        # replies:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/Comment'
+        deleted:
+          type: boolean
+        voteScore:
+          type: integer
+          format: int32
+        voteStatus:
+          $ref: '#/components/schemas/VoteStatus'
+      
+    Thread:
+      type: object
+      required:
+        - id
+        - dateCreated
+        - author
+        - title
+        - description
+        - numberOfComments
+        - voteScore
+      properties:
+        id:
+          type: integer
+          format: int64
+        dateCreated:
+          type: string
+          format: date-time
+        author:
+          $ref: '#/components/schemas/User'
+        title:
+          type: string
+        description:
+          type: string
+        numberOfComments:
+          type: integer
+          format: int32
+        voteScore:
+          type: integer
+          format: int32
+        voteStatus:
+          $ref: '#/components/schemas/VoteStatus'
+        # comments:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/Comment'
+
+    VoteStatus:
+      type: string
+      enum:
+        - up
+        - down
+        - neutral
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
