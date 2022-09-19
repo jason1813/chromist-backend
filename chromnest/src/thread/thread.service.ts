@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ThreadBodyDto } from './thread_dto';
+import { ThreadBodyDto, ThreadReturnDto, VoteStatusNeutral } from './thread_dto';
 
 @Injectable()
 export class ThreadService {
@@ -9,7 +9,7 @@ export class ThreadService {
         private prisma: PrismaService
     ) { }
 
-    async createThread(threadBodyDto: ThreadBodyDto, author: User) {
+    async createThread(threadBodyDto: ThreadBodyDto, author: User): Promise<ThreadReturnDto>  {
         const thread = await this.prisma.thread.create({
             data: {
                 title: threadBodyDto.title,
@@ -23,12 +23,15 @@ export class ThreadService {
         })
 
         delete thread.authorId;
-        return {
+
+        const threadReturn: ThreadReturnDto = {
             ...thread,
             author,
             numberOfComments: 0,
             voteScore: 0,
-            voteStatus: "neutral"
+            voteStatus: VoteStatusNeutral.neutral
         }
+
+        return threadReturn;
     }
 }

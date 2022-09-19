@@ -83,6 +83,6 @@ model ThreadVote {
 }
 
 enum VoteStatus {
-  Up
-  Down
+  up
+  down
 }
