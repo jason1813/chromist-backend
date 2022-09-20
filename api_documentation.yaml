@@ -10,26 +10,16 @@ paths:
     get:
       tags:
         - Threads
-      description:
-        Return the threads on specified page number with specified amount of threads to return (if token included in request, include voteStatus value)
+      description: Return the threads on specified page number with specified amount of threads to return (if token included in request, include voteStatus value)
       operationId: findThreads
       parameters:
-        - name: pageNumber
+        - name: startIndex
           in: query
-          description: The page number of which to grab threads from
+          description: The start index of which to grab strings from
           required: false
           schema:
             type: integer
             format: int32
-        - name: threadsPerPage
-          in: query
-          description: The amount of threads to be shown on each page (max of 100)
-          required: false
-          schema:
-            type: integer
-            format: int32
-            maximum: 100
-            minimum: 1
       responses:
         '200':
           description: Threads response
@@ -51,8 +41,7 @@ paths:
         - Threads
       security:
         - bearerAuth: []
-      description:
-        Post a new thread
+      description: Post a new thread
       operationId: postThread
       requestBody:
         content:
@@ -86,8 +75,7 @@ paths:
     get:
       tags:
         - Threads
-      description:
-        Return thread for specified thread ID
+      description: Return thread for specified thread ID
       operationId: findThread
       parameters:
         - name: threadID
@@ -115,8 +103,7 @@ paths:
     get:
       tags:
         - Threads
-      description:
-        Return the comments on a given thread (if token included in request, add voteStatus value)
+      description: Return the comments on a given thread (if token included in request, add voteStatus value)
       operationId: findCommentsOnThread
       parameters:
         - name: threadID
@@ -161,17 +148,16 @@ paths:
         - Threads
       security:
         - bearerAuth: []
-      description:
-        Post a new comment on a thread
+      description: Post a new comment on a thread
       operationId: postComment
       parameters:
-      - name: threadID
-        in: path
-        description: ID of thread to add comment to
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: threadID
+          in: path
+          description: ID of thread to add comment to
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -202,17 +188,16 @@ paths:
         - Threads
       security:
         - bearerAuth: []
-      description: 
-        Set voteStatus value on thread
+      description: Set voteStatus value on thread
       operationId: voteStatusThread
       parameters:
-      - name: threadID
-        in: path
-        description: ID of thread to add voteStatus to
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: threadID
+          in: path
+          description: ID of thread to add voteStatus to
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -235,8 +220,7 @@ paths:
     get:
       tags:
         - Comments
-      description:
-        Return up to a specified amount of replies on a comment starting at specified start index (if token included in request, include user voteStatus values)
+      description: Return up to a specified amount of replies on a comment starting at specified start index (if token included in request, include user voteStatus values)
       operationId: findReplies
       parameters:
         - name: commentID
@@ -285,17 +269,16 @@ paths:
         - Comments
       security:
         - bearerAuth: []
-      description:
-        Post a new reply on a comment
+      description: Post a new reply on a comment
       operationId: postReply
       parameters:
-      - name: commentID
-        in: path
-        description: ID of comment to add reply to
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: commentID
+          in: path
+          description: ID of comment to add reply to
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -325,17 +308,16 @@ paths:
         - Comments
       security:
         - bearerAuth: []
-      description: 
-        Set voteStatus value on comment
+      description: Set voteStatus value on comment
       operationId: voteStatusComment
       parameters:
-      - name: commentID
-        in: path
-        description: ID of comment to add voteStatus to
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: commentID
+          in: path
+          description: ID of comment to add voteStatus to
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -360,8 +342,7 @@ paths:
         - Comments
       security:
         - bearerAuth: []
-      description:
-        Delete specified comment
+      description: Delete specified comment
       operationId: deleteComment
       parameters:
         - name: commentID
@@ -385,8 +366,7 @@ paths:
     post:
       tags:
         - Auth
-      description:
-        Sign up or sign in a new user
+      description: Sign up or sign in a new user
       operationId: signupUser
       parameters:
         - name: action
@@ -447,9 +427,8 @@ paths:
       tags:
         - Auth
       security:
-      - bearerAuth: []
-      description:
-        Log user out
+        - bearerAuth: []
+      description: Log user out
       operationId: logoutUser
       responses:
         '200':
@@ -508,7 +487,7 @@ components:
           format: int32
         voteStatus:
           $ref: '#/components/schemas/VoteStatus'
-      
+
     Thread:
       type: object
       required:

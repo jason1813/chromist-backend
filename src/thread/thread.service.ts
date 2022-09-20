@@ -39,4 +39,15 @@ export class ThreadService {
 
     return threadReturn;
   }
+
+  // async getThreads(startIndex: number): Promise<[ThreadReturnDto]> {
+  async getThreads(startIndex: number) {
+    const threads = await this.prisma.thread.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    return threads;
+  }
 }
