@@ -36,7 +36,10 @@ export class ThreadService {
     return threadReturn;
   }
 
-  async getThreads(startIndex: number, userId?: number) {
+  async getThreads(
+    startIndex: number,
+    userId?: number
+  ): Promise<ThreadReturnDto[]> {
     const threads = await this.prisma.thread.findMany({
       orderBy: {
         createdAt: 'desc'
@@ -56,23 +59,32 @@ export class ThreadService {
             username: true
           }
         }
-      }
+      },
+      skip: startIndex,
+      take: 25
     });
 
-    const returnThread: ThreadReturnDto[] = threads.map((thread) => {
+    const returnThreads: ThreadReturnDto[] = threads.map((thread) => {
       const { authorId, votes, _count, ...threadStripped } = thread;
+
+      let voteStatus: VoteStatus;
+      if (userId === undefined) {
+        voteStatus = VoteStatus.neutral;
+      } else {
+        const threadVote = thread.votes.find((x) => x.userId === userId);
+        voteStatus =
+          threadVote !== undefined ? threadVote.vote : VoteStatus.neutral;
+      }
+
       const returnThread: ThreadReturnDto = {
         ...threadStripped,
         numberOfComments: thread._count.comments,
         voteScore: thread.votes.reduce((sum, { vote }) => sum + vote, 0),
-        voteStatus:
-          userId === undefined
-            ? VoteStatus.neutral
-            : thread.votes.find((x) => x.userId === userId).vote
+        voteStatus: voteStatus
       };
       return returnThread;
     });
 
-    return returnThread;
+    return returnThreads;
   }
 }

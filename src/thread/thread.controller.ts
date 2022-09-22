@@ -12,7 +12,7 @@ export class ThreadController {
   @UseGuards(OptionalJwtAuthGuard)
   @Get()
   getThreads(@Query() query: GetThreadsQueryDto, @GetUser() user: User) {
-    return this.threadService.getThreads(query.startIndex, user.id);
+    return this.threadService.getThreads(+query.startIndex, user.id);
   }
 
   @UseGuards(JwtGuard)
