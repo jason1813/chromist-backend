@@ -28,13 +28,12 @@ model Thread {
   createdAt   DateTime @default(now())
   title       String
   description String?
-  deleted     Boolean  @default(false)
 
   author   User @relation(fields: [authorId], references: [id])
   authorId Int
 
-  replies     Comment[]
-  threadVotes ThreadVote[]
+  comments    Comment[]
+  votes       ThreadVote[]
 
   @@map("threads")
 }
@@ -50,7 +49,7 @@ model Comment {
   thread    Thread   @relation(fields: [threadId], references: [id])
   threadId  Int
   comment   Comment? @relation("Comment Replies", fields: [commentId], references: [id])
-  commentId Int
+  commentId Int?
 
   replies Comment[]     @relation("Comment Replies")
   votes   CommentVote[]
@@ -60,29 +59,24 @@ model Comment {
 
 model CommentVote {
   id Int @id @default(autoincrement())
+  vote      Int
 
   user      User       @relation(fields: [userId], references: [id])
   userId    Int
   comment   Comment    @relation(fields: [commentId], references: [id])
   commentId Int
-  vote      VoteStatus
 
   @@map("commentvotes")
 }
 
 model ThreadVote {
   id Int @id @default(autoincrement())
+  vote     Int
 
   user     User       @relation(fields: [userId], references: [id])
   userId   Int
   thread   Thread     @relation(fields: [threadId], references: [id])
   threadId Int
-  vote     VoteStatus
 
   @@map("threadvotes")
-}
-
-enum VoteStatus {
-  up
-  down
 }

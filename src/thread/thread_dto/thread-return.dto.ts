@@ -1,14 +1,16 @@
-import { Thread, User, VoteStatus } from '@prisma/client';
+import { Thread, User } from '@prisma/client';
 
-enum VoteStatusNeutral {
-  neutral = 'neutral'
+enum VoteStatus {
+  up = 1,
+  neutral = 0,
+  down = -1
 }
 
-interface ThreadReturnDto extends Thread {
-  author: User;
+interface ThreadReturnDto extends Omit<Thread, 'authorId'> {
+  author: Omit<User, 'password'>;
   numberOfComments: number;
   voteScore: number;
-  voteStatus: VoteStatus | VoteStatusNeutral;
+  voteStatus: VoteStatus;
 }
 
-export { ThreadReturnDto, VoteStatusNeutral };
+export { ThreadReturnDto, VoteStatus };

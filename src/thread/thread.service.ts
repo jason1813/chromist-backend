@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  ThreadBodyDto,
-  ThreadReturnDto,
-  VoteStatusNeutral
-} from './thread_dto';
+import { ThreadBodyDto, ThreadReturnDto, VoteStatus } from './thread_dto';
 
 @Injectable()
 export class ThreadService {
@@ -34,20 +30,49 @@ export class ThreadService {
       author,
       numberOfComments: 0,
       voteScore: 0,
-      voteStatus: VoteStatusNeutral.neutral
+      voteStatus: VoteStatus.neutral
     };
 
     return threadReturn;
   }
 
-  // async getThreads(startIndex: number): Promise<[ThreadReturnDto]> {
-  async getThreads(startIndex: number) {
+  async getThreads(startIndex: number, userId?: number) {
     const threads = await this.prisma.thread.findMany({
       orderBy: {
         createdAt: 'desc'
+      },
+      include: {
+        _count: {
+          select: {
+            comments: true
+          }
+        },
+        votes: {
+          select: { vote: true, userId: true }
+        },
+        author: {
+          select: {
+            id: true,
+            username: true
+          }
+        }
       }
     });
 
-    return threads;
+    const returnThread: ThreadReturnDto[] = threads.map((thread) => {
+      const { authorId, votes, _count, ...threadStripped } = thread;
+      const returnThread: ThreadReturnDto = {
+        ...threadStripped,
+        numberOfComments: thread._count.comments,
+        voteScore: thread.votes.reduce((sum, { vote }) => sum + vote, 0),
+        voteStatus:
+          userId === undefined
+            ? VoteStatus.neutral
+            : thread.votes.find((x) => x.userId === userId).vote
+      };
+      return returnThread;
+    });
+
+    return returnThread;
   }
 }

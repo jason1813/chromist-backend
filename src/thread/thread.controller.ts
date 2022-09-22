@@ -1,15 +1,7 @@
-import {
-  Controller,
-  Req,
-  Post,
-  UseGuards,
-  Body,
-  Get,
-  Query
-} from '@nestjs/common';
+import { Controller, Post, UseGuards, Body, Get, Query } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { GetUser } from '../auth/decorator';
-import { JwtGuard } from '../auth/guard';
+import { JwtGuard, OptionalJwtAuthGuard } from '../auth/guard';
 import { ThreadService } from './thread.service';
 import { GetThreadsQueryDto, ThreadBodyDto } from './thread_dto';
 
@@ -17,9 +9,10 @@ import { GetThreadsQueryDto, ThreadBodyDto } from './thread_dto';
 export class ThreadController {
   constructor(private threadService: ThreadService) {}
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get()
-  getThreads(@Query() query: GetThreadsQueryDto) {
-    return this.threadService.getThreads(query.startIndex);
+  getThreads(@Query() query: GetThreadsQueryDto, @GetUser() user: User) {
+    return this.threadService.getThreads(query.startIndex, user.id);
   }
 
   @UseGuards(JwtGuard)
