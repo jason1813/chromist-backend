@@ -12,7 +12,7 @@ class ThreadBodyDto {
 
 class GetThreadsQueryDto {
   @IsString()
-  startIndex: number;
+  startIndex: string = '0';
 }
 
 export { ThreadBodyDto, GetThreadsQueryDto };

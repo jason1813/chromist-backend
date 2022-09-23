@@ -6,6 +6,12 @@ enum VoteStatus {
   down = -1
 }
 
+interface UnformattedThreadDto extends Thread {
+  _count: { comments: number };
+  votes: { vote: number; userId: number }[];
+  author: { id: number; username: string };
+}
+
 interface ThreadReturnDto extends Omit<Thread, 'authorId'> {
   author: Omit<User, 'password'>;
   numberOfComments: number;
@@ -13,4 +19,4 @@ interface ThreadReturnDto extends Omit<Thread, 'authorId'> {
   voteStatus: VoteStatus;
 }
 
-export { ThreadReturnDto, VoteStatus };
+export { ThreadReturnDto, VoteStatus, UnformattedThreadDto };

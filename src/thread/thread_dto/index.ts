@@ -1,2 +1,2 @@
 export * from './thread-request.dto';
-export * from './thread-return.dto';
+export * from './thread.dto';

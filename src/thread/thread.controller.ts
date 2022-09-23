@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Body, Get, Query } from '@nestjs/common';
+import { Controller, Post, UseGuards, Body, Get, Query, Param } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard, OptionalJwtAuthGuard } from '../auth/guard';
@@ -19,5 +19,11 @@ export class ThreadController {
   @Post()
   postThread(@Body() body: ThreadBodyDto, @GetUser() user: User) {
     return this.threadService.createThread(body, user);
+  }
+
+  @UseGuards(OptionalJwtAuthGuard)
+  @Get('/:id')
+  getThread(@Param('id') id, @GetUser() user: User) {
+    return this.threadService.getThread(+id, user.id);
   }
 }
