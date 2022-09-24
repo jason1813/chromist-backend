@@ -12,11 +12,11 @@ interface UnformattedThreadDto extends Thread {
   author: { id: number; username: string };
 }
 
-interface ThreadReturnDto extends Omit<Thread, 'authorId'> {
+interface FormattedThreadDto extends Omit<Thread, 'authorId'> {
   author: Omit<User, 'password'>;
   numberOfComments: number;
   voteScore: number;
   voteStatus: VoteStatus;
 }
 
-export { ThreadReturnDto, VoteStatus, UnformattedThreadDto };
+export { FormattedThreadDto, VoteStatus, UnformattedThreadDto };

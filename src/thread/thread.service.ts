@@ -3,14 +3,14 @@ import { User } from '@prisma/client';
 import { FormattedCommentDto } from 'src/comment/comment_dto/comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { formatComment } from 'src/utility/functions.utils';
-import { ThreadBodyDto, ThreadReturnDto, VoteStatus } from './thread_dto';
+import { ThreadBodyDto, FormattedThreadDto, VoteStatus } from './thread_dto';
 import { formatThread } from './thread_utils/thread-functions.utils';
 
 @Injectable()
 export class ThreadService {
   constructor(private prisma: PrismaService) {}
 
-  async createThread(threadBodyDto: ThreadBodyDto, author: User): Promise<ThreadReturnDto> {
+  async createThread(threadBodyDto: ThreadBodyDto, author: User): Promise<FormattedThreadDto> {
     const thread = await this.prisma.thread.create({
       data: {
         title: threadBodyDto.title,
@@ -25,7 +25,7 @@ export class ThreadService {
 
     delete thread.authorId;
 
-    const threadReturn: ThreadReturnDto = {
+    const threadReturn: FormattedThreadDto = {
       ...thread,
       author,
       numberOfComments: 0,
@@ -36,7 +36,7 @@ export class ThreadService {
     return threadReturn;
   }
 
-  async getThreads(startIndex: number, userId?: number): Promise<ThreadReturnDto[]> {
+  async getThreads(startIndex: number, userId?: number): Promise<FormattedThreadDto[]> {
     const threads = await this.prisma.thread.findMany({
       orderBy: {
         id: 'desc'
@@ -46,14 +46,14 @@ export class ThreadService {
       take: 25
     });
 
-    const returnThreads: ThreadReturnDto[] = threads.map((thread) => {
+    const returnThreads: FormattedThreadDto[] = threads.map((thread) => {
       return formatThread(thread, userId);
     });
 
     return returnThreads;
   }
 
-  async getThread(threadId: number, userId?: number): Promise<ThreadReturnDto> {
+  async getThread(threadId: number, userId?: number): Promise<FormattedThreadDto> {
     const thread = await this.prisma.thread.findUnique({
       where: {
         id: threadId
