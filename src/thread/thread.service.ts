@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { FormattedCommentDto, UnformattedCommentDto } from 'src/comment/comment_dto/comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ThreadBodyDto, ThreadReturnDto, UnformattedThreadDto, VoteStatus } from './thread_dto';
 
@@ -61,6 +62,30 @@ export class ThreadService {
     return this.formatThread(thread, userId);
   }
 
+  async getThreadComments(
+    threadId: number,
+    startIndex: number,
+    userId?: number
+  ): Promise<FormattedCommentDto[]> {
+    const comments = await this.prisma.comment.findMany({
+      where: {
+        threadId: threadId
+      },
+      orderBy: {
+        id: 'desc'
+      },
+      include: this.commentInclude,
+      skip: startIndex,
+      take: 20
+    });
+
+    const formattedComments: FormattedCommentDto[] = comments.map((comment) => {
+      return this.formatComment(comment, userId);
+    });
+
+    return formattedComments;
+  }
+
   formatThread = (unformattedThread: UnformattedThreadDto, userId?: number): ThreadReturnDto => {
     const { authorId, votes, _count, ...threadStripped } = unformattedThread;
 
@@ -81,10 +106,50 @@ export class ThreadService {
     return formattedThread;
   };
 
+  formatComment = (
+    unformattedComment: UnformattedCommentDto,
+    userId?: number
+  ): FormattedCommentDto => {
+    const { authorId, commentId, threadId, votes, _count, ...commentStripped } = unformattedComment;
+
+    let voteStatus: VoteStatus;
+    if (userId === undefined) {
+      voteStatus = VoteStatus.neutral;
+    } else {
+      const commentVote = unformattedComment.votes.find((x) => x.userId === userId);
+      voteStatus = commentVote !== undefined ? commentVote.vote : VoteStatus.neutral;
+    }
+
+    const formattedComment: FormattedCommentDto = {
+      ...commentStripped,
+      numberOfReplies: unformattedComment._count.replies,
+      voteScore: unformattedComment.votes.reduce((sum, { vote }) => sum + vote, 0),
+      voteStatus: voteStatus
+    };
+    return formattedComment;
+  };
+
   threadInclude = {
     _count: {
       select: {
         comments: true
+      }
+    },
+    votes: {
+      select: { vote: true, userId: true }
+    },
+    author: {
+      select: {
+        id: true,
+        username: true
+      }
+    }
+  };
+
+  commentInclude = {
+    _count: {
+      select: {
+        replies: true
       }
     },
     votes: {

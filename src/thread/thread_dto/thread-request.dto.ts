@@ -15,4 +15,9 @@ class GetThreadsQueryDto {
   startIndex: string = '0';
 }
 
-export { ThreadBodyDto, GetThreadsQueryDto };
+class GetThreadCommentsQueryDto {
+  @IsString()
+  startIndex: string = '0';
+}
+
+export { ThreadBodyDto, GetThreadsQueryDto, GetThreadCommentsQueryDto };
