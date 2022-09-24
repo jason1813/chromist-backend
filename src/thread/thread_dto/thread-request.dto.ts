@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
 class ThreadBodyDto {
   @IsString()
@@ -20,4 +20,11 @@ class GetThreadCommentsQueryDto {
   startIndex: string = '0';
 }
 
-export { ThreadBodyDto, GetThreadsQueryDto, GetThreadCommentsQueryDto };
+class PostCommentBodyDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(1000)
+  text: string;
+}
+
+export { ThreadBodyDto, GetThreadsQueryDto, GetThreadCommentsQueryDto, PostCommentBodyDto };

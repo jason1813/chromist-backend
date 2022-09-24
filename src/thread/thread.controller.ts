@@ -3,7 +3,12 @@ import { User } from '@prisma/client';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard, OptionalJwtAuthGuard } from '../auth/guard';
 import { ThreadService } from './thread.service';
-import { GetThreadCommentsQueryDto, GetThreadsQueryDto, ThreadBodyDto } from './thread_dto';
+import {
+  GetThreadCommentsQueryDto,
+  GetThreadsQueryDto,
+  PostCommentBodyDto,
+  ThreadBodyDto
+} from './thread_dto';
 
 @Controller('threads')
 export class ThreadController {
@@ -35,5 +40,15 @@ export class ThreadController {
     @GetUser() user: User
   ) {
     return this.threadService.getThreadComments(+id, +query.startIndex, user.id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('/:id/comments')
+  postCommentOnThread(
+    @Param('id') threadId,
+    @Body() body: PostCommentBodyDto,
+    @GetUser() user: User
+  ) {
+    return this.threadService.createCommentOnThread(+threadId, body.text, user);
   }
 }

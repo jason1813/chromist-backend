@@ -88,6 +88,40 @@ export class ThreadService {
     return formattedComments;
   }
 
+  async createCommentOnThread(
+    threadId: number,
+    text: string,
+    author: User
+  ): Promise<FormattedCommentDto> {
+    const comment = await this.prisma.comment.create({
+      data: {
+        text: text,
+        thread: {
+          connect: {
+            id: threadId
+          }
+        },
+        author: {
+          connect: {
+            id: author.id
+          }
+        }
+      }
+    });
+
+    delete comment.authorId;
+
+    const formattedComment: FormattedCommentDto = {
+      ...comment,
+      author,
+      numberOfReplies: 0,
+      voteScore: 0,
+      voteStatus: VoteStatus.neutral
+    };
+
+    return formattedComment;
+  }
+
   threadInclude = {
     _count: {
       select: {
