@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { FormattedCommentDto, UnformattedCommentDto } from 'src/comment/comment_dto/comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { getVoteScore, getVoteStatus } from 'src/utility/functions.utils';
+import { formatThread } from './thread-functions.utils';
 import { ThreadBodyDto, ThreadReturnDto, UnformattedThreadDto, VoteStatus } from './thread_dto';
 
 @Injectable()
@@ -45,7 +47,7 @@ export class ThreadService {
     });
 
     const returnThreads: ThreadReturnDto[] = threads.map((thread) => {
-      return this.formatThread(thread, userId);
+      return formatThread(thread, userId);
     });
 
     return returnThreads;
@@ -59,7 +61,7 @@ export class ThreadService {
       include: this.threadInclude
     });
 
-    return this.formatThread(thread, userId);
+    return formatThread(thread, userId);
   }
 
   async getThreadComments(
@@ -86,45 +88,17 @@ export class ThreadService {
     return formattedComments;
   }
 
-  formatThread = (unformattedThread: UnformattedThreadDto, userId?: number): ThreadReturnDto => {
-    const { authorId, votes, _count, ...threadStripped } = unformattedThread;
-
-    let voteStatus: VoteStatus;
-    if (userId === undefined) {
-      voteStatus = VoteStatus.neutral;
-    } else {
-      const threadVote = unformattedThread.votes.find((x) => x.userId === userId);
-      voteStatus = threadVote !== undefined ? threadVote.vote : VoteStatus.neutral;
-    }
-
-    const formattedThread: ThreadReturnDto = {
-      ...threadStripped,
-      numberOfComments: unformattedThread._count.comments,
-      voteScore: unformattedThread.votes.reduce((sum, { vote }) => sum + vote, 0),
-      voteStatus: voteStatus
-    };
-    return formattedThread;
-  };
-
   formatComment = (
     unformattedComment: UnformattedCommentDto,
     userId?: number
   ): FormattedCommentDto => {
     const { authorId, commentId, threadId, votes, _count, ...commentStripped } = unformattedComment;
 
-    let voteStatus: VoteStatus;
-    if (userId === undefined) {
-      voteStatus = VoteStatus.neutral;
-    } else {
-      const commentVote = unformattedComment.votes.find((x) => x.userId === userId);
-      voteStatus = commentVote !== undefined ? commentVote.vote : VoteStatus.neutral;
-    }
-
     const formattedComment: FormattedCommentDto = {
       ...commentStripped,
       numberOfReplies: unformattedComment._count.replies,
-      voteScore: unformattedComment.votes.reduce((sum, { vote }) => sum + vote, 0),
-      voteStatus: voteStatus
+      voteScore: getVoteScore(unformattedComment.votes),
+      voteStatus: getVoteStatus(unformattedComment.votes, userId)
     };
     return formattedComment;
   };
