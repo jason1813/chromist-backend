@@ -1,3 +1,4 @@
+import { FormattedCommentDto, UnformattedCommentDto } from 'src/comment/comment_dto/comment.dto';
 import { VoteStatus } from 'src/thread/thread_dto';
 
 const getVoteStatus = (votes: { vote: number; userId: number }[], userId?: number) => {
@@ -12,4 +13,19 @@ const getVoteScore = (votes: { vote: number; userId: number }[]): number => {
   return votes.reduce((sum, { vote }) => sum + vote, 0);
 };
 
-export { getVoteScore, getVoteStatus };
+const formatComment = (
+  unformattedComment: UnformattedCommentDto,
+  userId?: number
+): FormattedCommentDto => {
+  const { authorId, commentId, threadId, votes, _count, ...commentStripped } = unformattedComment;
+
+  const formattedComment: FormattedCommentDto = {
+    ...commentStripped,
+    numberOfReplies: unformattedComment._count.replies,
+    voteScore: getVoteScore(unformattedComment.votes),
+    voteStatus: getVoteStatus(unformattedComment.votes, userId)
+  };
+  return formattedComment;
+};
+
+export { getVoteScore, getVoteStatus, formatComment };

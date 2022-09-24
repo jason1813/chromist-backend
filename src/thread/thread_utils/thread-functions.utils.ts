@@ -1,5 +1,5 @@
 import { getVoteScore, getVoteStatus } from 'src/utility/functions.utils';
-import { ThreadReturnDto, UnformattedThreadDto } from './thread_dto';
+import { ThreadReturnDto, UnformattedThreadDto } from '../thread_dto';
 
 const formatThread = (
   unformattedThread: UnformattedThreadDto,

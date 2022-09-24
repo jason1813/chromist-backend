@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { FormattedCommentDto, UnformattedCommentDto } from 'src/comment/comment_dto/comment.dto';
+import { FormattedCommentDto } from 'src/comment/comment_dto/comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { getVoteScore, getVoteStatus } from 'src/utility/functions.utils';
-import { formatThread } from './thread-functions.utils';
-import { ThreadBodyDto, ThreadReturnDto, UnformattedThreadDto, VoteStatus } from './thread_dto';
+import { formatComment } from 'src/utility/functions.utils';
+import { ThreadBodyDto, ThreadReturnDto, VoteStatus } from './thread_dto';
+import { formatThread } from './thread_utils/thread-functions.utils';
 
 @Injectable()
 export class ThreadService {
@@ -82,26 +82,11 @@ export class ThreadService {
     });
 
     const formattedComments: FormattedCommentDto[] = comments.map((comment) => {
-      return this.formatComment(comment, userId);
+      return formatComment(comment, userId);
     });
 
     return formattedComments;
   }
-
-  formatComment = (
-    unformattedComment: UnformattedCommentDto,
-    userId?: number
-  ): FormattedCommentDto => {
-    const { authorId, commentId, threadId, votes, _count, ...commentStripped } = unformattedComment;
-
-    const formattedComment: FormattedCommentDto = {
-      ...commentStripped,
-      numberOfReplies: unformattedComment._count.replies,
-      voteScore: getVoteScore(unformattedComment.votes),
-      voteStatus: getVoteStatus(unformattedComment.votes, userId)
-    };
-    return formattedComment;
-  };
 
   threadInclude = {
     _count: {
