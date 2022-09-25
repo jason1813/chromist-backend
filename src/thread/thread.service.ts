@@ -122,6 +122,26 @@ export class ThreadService {
     return formattedComment;
   }
 
+  async voteOnThread(threadId: number, voteStatus: VoteStatus, user: User): Promise<string> {
+    await this.prisma.threadVote.create({
+      data: {
+        vote: voteStatus,
+        thread: {
+          connect: {
+            id: threadId
+          }
+        },
+        user: {
+          connect: {
+            id: user.id
+          }
+        }
+      }
+    });
+
+    return 'Voted on thread successfully!';
+  }
+
   threadInclude = {
     _count: {
       select: {

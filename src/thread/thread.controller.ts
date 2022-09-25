@@ -1,5 +1,16 @@
-import { Controller, Post, UseGuards, Body, Get, Query, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  Body,
+  Get,
+  Query,
+  Param,
+  HttpCode,
+  ParseIntPipe
+} from '@nestjs/common';
 import { User } from '@prisma/client';
+import { PostVoteStatusDto } from 'src/utility/request.utils.dto';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard, OptionalJwtAuthGuard } from '../auth/guard';
 import { ThreadService } from './thread.service';
@@ -27,28 +38,39 @@ export class ThreadController {
   }
 
   @UseGuards(OptionalJwtAuthGuard)
-  @Get('/:id')
-  getThread(@Param('id') id, @GetUser() user: User) {
-    return this.threadService.getThread(+id, user.id);
+  @Get('/:threadId')
+  getThread(@Param('threadId', ParseIntPipe) threadId: number, @GetUser() user: User) {
+    return this.threadService.getThread(threadId, user.id);
   }
 
   @UseGuards(OptionalJwtAuthGuard)
-  @Get('/:id/comments')
+  @Get('/:threadId/comments')
   getThreadComments(
-    @Param('id') id,
+    @Param('threadId', ParseIntPipe) threadId: number,
     @Query() query: GetThreadCommentsQueryDto,
     @GetUser() user: User
   ) {
-    return this.threadService.getThreadComments(+id, +query.startIndex, user.id);
+    return this.threadService.getThreadComments(threadId, query.startIndex, user.id);
   }
 
   @UseGuards(JwtGuard)
-  @Post('/:id/comments')
+  @Post('/:threadId/comments')
   postCommentOnThread(
-    @Param('id') threadId,
+    @Param('threadId', ParseIntPipe) threadId: number,
     @Body() body: PostCommentBodyDto,
     @GetUser() user: User
   ) {
-    return this.threadService.createCommentOnThread(+threadId, body.text, user);
+    return this.threadService.createCommentOnThread(threadId, body.text, user);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('/:threadId/vote')
+  @HttpCode(204)
+  postVoteStatusOnThread(
+    @Param('threadId', ParseIntPipe) threadId: number,
+    @Body() body: PostVoteStatusDto,
+    @GetUser() user: User
+  ) {
+    return this.threadService.voteOnThread(threadId, body.voteStatus, user);
   }
 }

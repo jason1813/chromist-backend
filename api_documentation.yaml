@@ -182,7 +182,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /threads/{threadID}/voteStatus:
+  /threads/{threadID}/vote:
     post:
       tags:
         - Threads
@@ -302,7 +302,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /comments/{commentID}/voteStatus:
+  /comments/{commentID}/vote:
     post:
       tags:
         - Comments

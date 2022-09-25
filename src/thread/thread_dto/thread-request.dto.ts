@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator';
 
 class ThreadBodyDto {
   @IsString()
@@ -11,13 +12,15 @@ class ThreadBodyDto {
 }
 
 class GetThreadsQueryDto {
-  @IsString()
-  startIndex: string = '0';
+  @Transform(({ value }) => parseInt(value))
+  @IsNumber()
+  startIndex: number = 0;
 }
 
 class GetThreadCommentsQueryDto {
-  @IsString()
-  startIndex: string = '0';
+  @Transform(({ value }) => parseInt(value))
+  @IsNumber()
+  startIndex: number = 0;
 }
 
 class PostCommentBodyDto {
