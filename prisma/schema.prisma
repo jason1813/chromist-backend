@@ -45,8 +45,8 @@ model Comment {
 
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
-  thread    Thread   @relation(fields: [threadId], references: [id])
-  threadId  Int
+  thread    Thread?   @relation(fields: [threadId], references: [id])
+  threadId  Int?
   comment   Comment? @relation("Comment Replies", fields: [commentId], references: [id])
   commentId Int?
 
