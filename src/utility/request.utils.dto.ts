@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsEnum, IsNumber } from 'class-validator';
 import { VoteStatus } from 'src/thread/thread_dto';
 
 class PostVoteStatusDto {
@@ -8,4 +8,10 @@ class PostVoteStatusDto {
   voteStatus: VoteStatus;
 }
 
-export { PostVoteStatusDto };
+class QueryStartIndexDto {
+  @Transform(({ value }) => parseInt(value))
+  @IsNumber()
+  startIndex: number = 0;
+}
+
+export { PostVoteStatusDto, QueryStartIndexDto };

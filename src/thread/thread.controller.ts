@@ -11,11 +11,11 @@ import {
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PostCommentBodyDto } from 'src/comment/comment_dto/comment-request.dto';
-import { PostVoteStatusDto } from 'src/utility/request.utils.dto';
+import { PostVoteStatusDto, QueryStartIndexDto } from 'src/utility/request.utils.dto';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard, OptionalJwtAuthGuard } from '../auth/guard';
 import { ThreadService } from './thread.service';
-import { GetThreadCommentsQueryDto, GetThreadsQueryDto, ThreadBodyDto } from './thread_dto';
+import { ThreadBodyDto } from './thread_dto';
 
 @Controller('threads')
 export class ThreadController {
@@ -23,7 +23,7 @@ export class ThreadController {
 
   @UseGuards(OptionalJwtAuthGuard)
   @Get()
-  getThreads(@Query() query: GetThreadsQueryDto, @GetUser() user: User) {
+  getThreads(@Query() query: QueryStartIndexDto, @GetUser() user: User) {
     return this.threadService.getThreads(+query.startIndex, user.id);
   }
 
@@ -43,7 +43,7 @@ export class ThreadController {
   @Get('/:threadId/comments')
   getThreadComments(
     @Param('threadId', ParseIntPipe) threadId: number,
-    @Query() query: GetThreadCommentsQueryDto,
+    @Query() query: QueryStartIndexDto,
     @GetUser() user: User
   ) {
     return this.threadService.getThreadComments(threadId, query.startIndex, user.id);

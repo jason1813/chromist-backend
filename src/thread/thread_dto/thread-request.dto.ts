@@ -11,16 +11,4 @@ class ThreadBodyDto {
   description: string;
 }
 
-class GetThreadsQueryDto {
-  @Transform(({ value }) => parseInt(value))
-  @IsNumber()
-  startIndex: number = 0;
-}
-
-class GetThreadCommentsQueryDto {
-  @Transform(({ value }) => parseInt(value))
-  @IsNumber()
-  startIndex: number = 0;
-}
-
-export { ThreadBodyDto, GetThreadsQueryDto, GetThreadCommentsQueryDto };
+export { ThreadBodyDto };

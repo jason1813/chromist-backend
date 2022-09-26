@@ -3,6 +3,7 @@ import { User } from '@prisma/client';
 import { FormattedCommentDto } from 'src/comment/comment_dto/comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { formatComment } from 'src/utility/functions.utils';
+import { commentInclude } from 'src/utility/objects.utils';
 import { ThreadBodyDto, FormattedThreadDto, VoteStatus } from './thread_dto';
 import { formatThread } from './thread_utils/thread-functions.utils';
 
@@ -76,7 +77,7 @@ export class ThreadService {
       orderBy: {
         id: 'desc'
       },
-      include: this.commentInclude,
+      include: commentInclude,
       skip: startIndex,
       take: 20
     });
@@ -146,23 +147,6 @@ export class ThreadService {
     _count: {
       select: {
         comments: true
-      }
-    },
-    votes: {
-      select: { vote: true, userId: true }
-    },
-    author: {
-      select: {
-        id: true,
-        username: true
-      }
-    }
-  };
-
-  commentInclude = {
-    _count: {
-      select: {
-        replies: true
       }
     },
     votes: {
