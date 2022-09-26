@@ -10,16 +10,12 @@ import {
   ParseIntPipe
 } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { PostCommentBodyDto } from 'src/comment/comment_dto/comment-request.dto';
 import { PostVoteStatusDto } from 'src/utility/request.utils.dto';
 import { GetUser } from '../auth/decorator';
 import { JwtGuard, OptionalJwtAuthGuard } from '../auth/guard';
 import { ThreadService } from './thread.service';
-import {
-  GetThreadCommentsQueryDto,
-  GetThreadsQueryDto,
-  PostCommentBodyDto,
-  ThreadBodyDto
-} from './thread_dto';
+import { GetThreadCommentsQueryDto, GetThreadsQueryDto, ThreadBodyDto } from './thread_dto';
 
 @Controller('threads')
 export class ThreadController {

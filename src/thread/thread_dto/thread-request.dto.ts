@@ -23,11 +23,4 @@ class GetThreadCommentsQueryDto {
   startIndex: number = 0;
 }
 
-class PostCommentBodyDto {
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(1000)
-  text: string;
-}
-
-export { ThreadBodyDto, GetThreadsQueryDto, GetThreadCommentsQueryDto, PostCommentBodyDto };
+export { ThreadBodyDto, GetThreadsQueryDto, GetThreadCommentsQueryDto };
