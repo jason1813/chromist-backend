@@ -15,4 +15,10 @@ const commentInclude = {
   }
 };
 
-export { commentInclude };
+enum VoteStatus {
+  up = 1,
+  neutral = 0,
+  down = -1
+}
+
+export { commentInclude, VoteStatus };

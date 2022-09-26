@@ -3,8 +3,8 @@ import { User } from '@prisma/client';
 import { FormattedCommentDto } from 'src/comment/comment_dto/comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { formatComment } from 'src/utility/functions.utils';
-import { commentInclude } from 'src/utility/objects.utils';
-import { ThreadBodyDto, FormattedThreadDto, VoteStatus } from './thread_dto';
+import { commentInclude, VoteStatus } from 'src/utility/objects.utils';
+import { ThreadBodyDto, FormattedThreadDto } from './thread_dto';
 import { formatThread } from './thread_utils/thread-functions.utils';
 
 @Injectable()

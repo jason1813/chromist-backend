@@ -1,10 +1,5 @@
 import { Thread, User } from '@prisma/client';
-
-enum VoteStatus {
-  up = 1,
-  neutral = 0,
-  down = -1
-}
+import { VoteStatus } from 'src/utility/objects.utils';
 
 interface UnformattedThreadDto extends Thread {
   _count: { comments: number };
@@ -19,4 +14,4 @@ interface FormattedThreadDto extends Omit<Thread, 'authorId'> {
   voteStatus: VoteStatus;
 }
 
-export { FormattedThreadDto, VoteStatus, UnformattedThreadDto };
+export { FormattedThreadDto, UnformattedThreadDto };

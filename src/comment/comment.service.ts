@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { VoteStatus } from 'src/thread/thread_dto';
+import { VoteStatus } from 'src/utility/objects.utils';
 import { formatComment } from 'src/utility/functions.utils';
 import { commentInclude } from 'src/utility/objects.utils';
 import { FormattedCommentDto } from './comment_dto/comment.dto';
@@ -62,5 +62,25 @@ export class CommentService {
     };
 
     return formattedComment;
+  }
+
+  async voteOnComment(commentId: number, voteStatus: VoteStatus, user: User): Promise<string> {
+    await this.prisma.commentVote.create({
+      data: {
+        vote: voteStatus,
+        comment: {
+          connect: {
+            id: commentId
+          }
+        },
+        user: {
+          connect: {
+            id: user.id
+          }
+        }
+      }
+    });
+
+    return 'Voted on comment successfully!';
   }
 }

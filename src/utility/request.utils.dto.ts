@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsEnum, IsNumber } from 'class-validator';
-import { VoteStatus } from 'src/thread/thread_dto';
+import { VoteStatus } from './objects.utils';
 
 class PostVoteStatusDto {
   @Transform(({ value }) => parseInt(value))

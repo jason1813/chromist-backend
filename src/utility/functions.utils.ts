@@ -1,5 +1,5 @@
 import { FormattedCommentDto, UnformattedCommentDto } from 'src/comment/comment_dto/comment.dto';
-import { VoteStatus } from 'src/thread/thread_dto';
+import { VoteStatus } from './objects.utils';
 
 const getVoteStatus = (votes: { vote: number; userId: number }[], userId?: number) => {
   if (userId === undefined) {

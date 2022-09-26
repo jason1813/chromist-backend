@@ -1,5 +1,5 @@
 import { Comment, User } from '@prisma/client';
-import { VoteStatus } from 'src/thread/thread_dto';
+import { VoteStatus } from 'src/utility/objects.utils';
 
 interface UnformattedCommentDto extends Comment {
   author: Omit<User, 'password'>;
