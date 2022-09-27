@@ -124,22 +124,41 @@ export class ThreadService {
   }
 
   async voteOnThread(threadId: number, voteStatus: VoteStatus, user: User): Promise<string> {
-    await this.prisma.threadVote.create({
-      data: {
-        vote: voteStatus,
-        thread: {
-          connect: {
-            id: threadId
-          }
-        },
-        user: {
-          connect: {
-            id: user.id
+    if (voteStatus === VoteStatus.neutral) {
+      await this.prisma.threadVote.delete({
+        where: {
+          userId_threadId: {
+            userId: user.id,
+            threadId: threadId
           }
         }
-      }
-    });
-
+      });
+    } else {
+      await this.prisma.threadVote.upsert({
+        where: {
+          userId_threadId: {
+            userId: user.id,
+            threadId: threadId
+          }
+        },
+        update: {
+          vote: voteStatus
+        },
+        create: {
+          vote: voteStatus,
+          thread: {
+            connect: {
+              id: threadId
+            }
+          },
+          user: {
+            connect: {
+              id: user.id
+            }
+          }
+        }
+      });
+    }
     return 'Voted on thread successfully!';
   }
 

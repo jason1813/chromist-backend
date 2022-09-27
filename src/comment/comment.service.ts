@@ -65,22 +65,41 @@ export class CommentService {
   }
 
   async voteOnComment(commentId: number, voteStatus: VoteStatus, user: User): Promise<string> {
-    await this.prisma.commentVote.create({
-      data: {
-        vote: voteStatus,
-        comment: {
-          connect: {
-            id: commentId
-          }
-        },
-        user: {
-          connect: {
-            id: user.id
+    if (voteStatus === VoteStatus.neutral) {
+      await this.prisma.commentVote.delete({
+        where: {
+          userId_commentId: {
+            userId: user.id,
+            commentId: commentId
           }
         }
-      }
-    });
-
+      });
+    } else {
+      await this.prisma.commentVote.upsert({
+        where: {
+          userId_commentId: {
+            userId: user.id,
+            commentId: commentId
+          }
+        },
+        update: {
+          vote: voteStatus
+        },
+        create: {
+          vote: voteStatus,
+          comment: {
+            connect: {
+              id: commentId
+            }
+          },
+          user: {
+            connect: {
+              id: user.id
+            }
+          }
+        }
+      });
+    }
     return 'Voted on comment successfully!';
   }
 }

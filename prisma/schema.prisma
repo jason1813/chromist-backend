@@ -64,6 +64,7 @@ model CommentVote {
   userId    Int
   comment   Comment    @relation(fields: [commentId], references: [id])
   commentId Int
+  @@unique([userId, commentId])
 
   @@map("commentvotes")
 }
@@ -76,6 +77,7 @@ model ThreadVote {
   userId   Int
   thread   Thread     @relation(fields: [threadId], references: [id])
   threadId Int
+  @@unique([userId, threadId])
 
   @@map("threadvotes")
 }
