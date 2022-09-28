@@ -18,12 +18,13 @@ const formatComment = (
   userId?: number
 ): FormattedCommentDto => {
   const { authorId, commentId, threadId, votes, _count, ...commentStripped } = unformattedComment;
+  const voteStatus = getVoteStatus(unformattedComment.votes, userId);
 
   const formattedComment: FormattedCommentDto = {
     ...commentStripped,
     numberOfReplies: unformattedComment._count.replies,
-    voteScore: getVoteScore(unformattedComment.votes),
-    voteStatus: getVoteStatus(unformattedComment.votes, userId)
+    voteScore: getVoteScore(unformattedComment.votes) - voteStatus,
+    voteStatus: voteStatus
   };
   return formattedComment;
 };

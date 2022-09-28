@@ -66,12 +66,10 @@ export class CommentService {
 
   async voteOnComment(commentId: number, voteStatus: VoteStatus, user: User): Promise<string> {
     if (voteStatus === VoteStatus.neutral) {
-      await this.prisma.commentVote.delete({
+      await this.prisma.commentVote.deleteMany({
         where: {
-          userId_commentId: {
-            userId: user.id,
-            commentId: commentId
-          }
+          userId: user.id,
+          commentId: commentId
         }
       });
     } else {

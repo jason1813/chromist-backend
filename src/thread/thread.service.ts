@@ -125,12 +125,10 @@ export class ThreadService {
 
   async voteOnThread(threadId: number, voteStatus: VoteStatus, user: User): Promise<string> {
     if (voteStatus === VoteStatus.neutral) {
-      await this.prisma.threadVote.delete({
+      await this.prisma.threadVote.deleteMany({
         where: {
-          userId_threadId: {
-            userId: user.id,
-            threadId: threadId
-          }
+          userId: user.id,
+          threadId: threadId
         }
       });
     } else {

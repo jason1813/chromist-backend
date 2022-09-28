@@ -7,11 +7,13 @@ const formatThread = (
 ): FormattedThreadDto => {
   const { authorId, votes, _count, ...threadStripped } = unformattedThread;
 
+  const voteStatus = getVoteStatus(unformattedThread.votes, userId);
+
   const formattedThread: FormattedThreadDto = {
     ...threadStripped,
     numberOfComments: unformattedThread._count.comments,
-    voteScore: getVoteScore(unformattedThread.votes),
-    voteStatus: getVoteStatus(unformattedThread.votes, userId)
+    voteScore: getVoteScore(unformattedThread.votes) - voteStatus,
+    voteStatus: voteStatus
   };
   return formattedThread;
 };
