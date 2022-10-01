@@ -8,7 +8,6 @@ class ThreadBodyDto {
   title: string;
 
   @IsString()
-  @IsNotEmpty()
   @MaxLength(1000)
   description: string;
 }
