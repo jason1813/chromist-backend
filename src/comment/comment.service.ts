@@ -23,8 +23,7 @@ export class CommentService {
         id: 'desc'
       },
       include: commentInclude,
-      skip: startIndex,
-      take: 20
+      skip: startIndex
     });
 
     const formattedReplies: FormattedCommentDto[] = replies.map((comment) => {

@@ -78,8 +78,7 @@ export class ThreadService {
         id: 'desc'
       },
       include: commentInclude,
-      skip: startIndex,
-      take: 20
+      skip: startIndex
     });
 
     const formattedComments: FormattedCommentDto[] = comments.map((comment) => {
