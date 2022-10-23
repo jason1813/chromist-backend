@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  chromist-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chromist-api
+    restart: always
+    ports:
+      - 3001:3001
+    depends_on:
+      - database
+    env_file:
+      - .env
+
+  database:
+    image: chrom-dkrimg
+    container_name: chrom-db-dkrctr
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-ch:/var/lib/postgresql/data
+
+volumes:
+  postgres-ch:
+    name: chrom-vol
