@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Swagger UI</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.24.2/swagger-ui.css" >
+  <style>
+    html
+    {
+      box-sizing: border-box;
+      overflow: -moz-scrollbars-vertical;
+      overflow-y: scroll;
+    }
+    *,
+    *:before,
+    *:after
+    {
+      box-sizing: inherit;
+    }
+
+    body {
+      margin:0;
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+
+<div id="swagger-ui"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.24.2/swagger-ui-bundle.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.24.2/swagger-ui-standalone-preset.js"> </script>
+<script>
+window.onload = function() {
+
+  var spec = {"info": {"version": "1.0", "title": "Chromist API"}, "paths": {"/threads/{threadID}/comments": {"post": {"requestBody": {"content": {"application/x-www-form-urlencoded": {"schema": {"type": "object", "properties": {"text": {"type": "string", "description": "Text for comment to add to the thread"}}}}}}, "responses": {"200": {"content": {"application/json": {"schema": {"schema": null, "$ref": "#/components/schemas/Comment"}}}, "description": "comment response"}, "401": {"description": "Unauthorized"}, "500": {"description": "Internal Server Error"}, "400": {"description": "Bad Request"}}, "parameters": [{"required": true, "in": "path", "description": "ID of thread to add comment to", "name": "threadID", "schema": {"type": "integer", "format": "int64"}}], "tags": ["Threads"], "security": [{"bearerAuth": []}], "operationId": "postComment", "description": "Post a new comment on a thread"}, "get": {"description": "Return the comments on a given thread (if token included in request, add voteStatus value)", "tags": ["Threads"], "responses": {"200": {"content": {"application/json": {"schema": {"items": {"$ref": "#/components/schemas/Comment"}, "type": "array"}}}, "description": "comments response"}, "401": {"description": "Unauthorized (if auth token sent and not valid)"}, "500": {"description": "Internal Server Error"}, "400": {"description": "Bad Request"}}, "parameters": [{"required": true, "in": "path", "description": "ID of thread to add comment to", "name": "threadID", "schema": {"type": "integer", "format": "int64"}}, {"required": false, "in": "query", "description": "The start index from where to grab comments from", "name": "startIndex", "schema": {"type": "integer", "format": "int32"}}], "operationId": "findCommentsOnThread"}}, "/threads": {"post": {"requestBody": {"content": {"application/x-www-form-urlencoded": {"schema": {"type": "object", "properties": {"description": {"type": "string", "description": "Text for the description of the new thread"}, "title": {"type": "string", "description": "Text for the title of the new thread"}}}}}, "required": true}, "responses": {"200": {"content": {"application/json": {"schema": {"schema": null, "$ref": "#/components/schemas/Thread"}}}, "description": "new thread response"}, "401": {"description": "Unauthorized"}, "500": {"description": "Internal Server Error"}, "400": {"description": "Bad Request"}}, "tags": ["Threads"], "security": [{"bearerAuth": []}], "operationId": "postThread", "description": "Post a new thread"}, "get": {"description": "Return the threads on specified page number with specified amount of threads to return (if token included in request, include voteStatus value)", "tags": ["Threads"], "responses": {"200": {"content": {"application/json": {"schema": {"items": {"$ref": "#/components/schemas/Thread"}, "type": "array"}}}, "description": "Threads response"}, "401": {"description": "Unauthorized (if auth token sent and not valid)"}, "500": {"description": "Internal Server Error"}, "400": {"description": "Bad Request"}}, "parameters": [{"required": false, "in": "query", "description": "The start index of which to grab threads from", "name": "startIndex", "schema": {"type": "integer", "format": "int32"}}], "operationId": "findThreads"}}, "/threads/{threadID}": {"get": {"description": "Return thread for specified thread ID", "tags": ["Threads"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Thread"}}}, "description": "thread response"}, "401": {"description": "Unauthorized"}, "500": {"description": "Internal Server Error"}, "400": {"description": "Bad Request"}}, "parameters": [{"required": true, "in": "path", "description": "ID of thread to return", "name": "threadID", "schema": {"type": "integer", "format": "int64"}}], "operationId": "findThread"}}, "/comments/{commentID}/replies": {"post": {"requestBody": {"content": {"application/x-www-form-urlencoded": {"schema": {"type": "object", "properties": {"text": {"type": "string", "description": "Text for reply to add to the comment"}}}}}}, "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Comment"}}}, "description": "reply response"}, "401": {"description": "Unauthorized"}, "500": {"description": "Internal Server Error"}, "400": {"description": "Bad Request"}}, "parameters": [{"required": true, "in": "path", "description": "ID of comment to add reply to", "name": "commentID", "schema": {"type": "integer", "format": "int64"}}], "tags": ["Comments"], "security": [{"bearerAuth": []}], "operationId": "postReply", "description": "Post a new reply on a comment"}, "get": {"description": "Return up to a specified amount of replies on a comment starting at specified start index (if token included in request, include user voteStatus values)", "tags": ["Comments"], "responses": {"200": {"content": {"application/json": {"schema": {"items": {"$ref": "#/components/schemas/Comment"}, "type": "array"}}}, "description": "replies response"}, "401": {"description": "Unauthorized (if auth token sent and not valid)"}, "500": {"description": "Internal Server Error"}, "400": {"description": "Bad Request"}}, "parameters": [{"required": true, "in": "path", "description": "ID of comment to get replies from", "name": "commentID", "schema": {"type": "integer", "format": "int64"}}, {"required": false, "in": "query", "description": "first index for which replies on the comment to grab from", "name": "startIndex", "schema": {"default": 0, "type": "integer", "format": "int32"}}], "operationId": "findReplies"}}, "/comments/{commentID}/vote": {"post": {"requestBody": {"content": {"application/x-www-form-urlencoded": {"schema": {"type": "object", "properties": {"voteStatus": {"$ref": "#/components/schemas/VoteStatus"}}}}}}, "responses": {"200": {"description": "Comment successfully voted!"}, "401": {"description": "Unauthorized"}, "500": {"description": "Internal Server Error"}, "400": {"description": "Bad Request"}}, "parameters": [{"required": true, "in": "path", "description": "ID of comment to add voteStatus to", "name": "commentID", "schema": {"type": "integer", "format": "int64"}}], "tags": ["Comments"], "security": [{"bearerAuth": []}], "operationId": "voteStatusComment", "description": "Set voteStatus value on comment"}}, "/auth/tokens": {"post": {"requestBody": {"content": {"application/x-www-form-urlencoded": {"schema": {"type": "object", "properties": {"username": {"type": "string", "description": "username of the new user"}, "password": {"type": "string", "description": "hashed password for the new user"}}}}}, "required": true}, "responses": {"201": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/AccessToken"}}}, "description": "New user created successfully!"}, "200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/AccessToken"}}}, "description": "User logged in successfully!"}, "500": {"description": "Internal Server Error"}, "401": {"description": "Login credentials are invalid"}, "400": {"description": "Bad Request"}, "409": {"description": "Username already taken"}}, "parameters": [{"required": true, "in": "query", "description": "action to perform (signup or login)", "name": "action", "schema": {"enum": ["signup", "login"], "type": "string"}}], "tags": ["Auth"], "operationId": "signupUser", "description": "Sign up or sign in a new user"}}, "/threads/{threadID}/vote": {"post": {"requestBody": {"content": {"application/x-www-form-urlencoded": {"schema": {"type": "object", "properties": {"voteStatus": {"$ref": "#/components/schemas/VoteStatus"}}}}}}, "responses": {"200": {"description": "Thread successfully voted!"}, "401": {"description": "Unauthorized"}, "500": {"description": "Internal Server Error"}, "400": {"description": "Bad Request"}}, "parameters": [{"required": true, "in": "path", "description": "ID of thread to add voteStatus to", "name": "threadID", "schema": {"type": "integer", "format": "int64"}}], "tags": ["Threads"], "security": [{"bearerAuth": []}], "operationId": "voteStatusThread", "description": "Set voteStatus value on thread"}}}, "openapi": "3.0.2", "components": {"securitySchemes": {"bearerAuth": {"scheme": "bearer", "type": "http", "bearerFormat": "JWT"}}, "schemas": {"Comment": {"required": ["id", "createdAt", "author", "content", "numberOfReplies", "voteScore"], "type": "object", "properties": {"voteStatus": {"$ref": "#/components/schemas/VoteStatus"}, "numberOfReplies": {"type": "integer", "format": "int32"}, "voteScore": {"type": "integer", "format": "int32"}, "author": {"$ref": "#/components/schemas/User"}, "text": {"type": "string"}, "id": {"type": "integer", "format": "int64"}, "createdAt": {"type": "string", "format": "date-time"}}}, "VoteStatus": {"enum": [1, -1, 0], "type": "integer"}, "Thread": {"required": ["id", "createdAt", "author", "title", "description", "numberOfComments", "voteScore"], "type": "object", "properties": {"numberOfComments": {"type": "integer", "format": "int32"}, "description": {"type": "string"}, "title": {"type": "string"}, "author": {"$ref": "#/components/schemas/User"}, "voteStatus": {"$ref": "#/components/schemas/VoteStatus"}, "voteScore": {"type": "integer", "format": "int32"}, "id": {"type": "integer", "format": "int64"}, "createdAt": {"type": "string", "format": "date-time"}}}, "User": {"required": ["id", "username"], "type": "object", "properties": {"username": {"type": "string"}, "id": {"type": "integer", "format": "int64"}}}, "AccessToken": {"type": "object", "properties": {"access_token": {"type": "string", "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiaGlpbXdhZmZsZTIxIiwiaWF0IjoxNjY3MTM3MDk4LCJleHAiOjE2NjcxNDA2OTh9.2BCwniDGA_8Knqv36Q56ecpuAVyrC74JQrDyumSP25U"}}}}}, "servers": [{"url": "http://0.0.0.0:3001/v1"}]};
+
+  // Build a system
+  const ui = SwaggerUIBundle({
+    spec: spec,
+    dom_id: '#swagger-ui',
+    deepLinking: true,
+    presets: [
+      SwaggerUIBundle.presets.apis,
+      SwaggerUIStandalonePreset
+    ],
+    plugins: [
+      SwaggerUIBundle.plugins.DownloadUrl
+    ],
+    layout: "StandaloneLayout"
+  })
+
+  window.ui = ui
+}
+</script>
+</body>
+
+</html>
