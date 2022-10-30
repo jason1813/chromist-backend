@@ -1,10 +1,8 @@
 # Chromist.org - Reddit-like Christian Forum
 
-[www.chromist.org](http://www.chromist.org/) is a highly functional forum-based Christian website similar to reddit that allows users to upvote and downvote posts and comments.<br />
+[www.chromist.org](http://www.chromist.org/) is a highly functional Christian forum website similar to reddit that allows users to upvote and downvote posts and comments.<br />
 
 ## The Stack
-
-Here is the tech stack that was used to build Chromist:
 
 ### Backend
 
@@ -26,7 +24,9 @@ The frontend was created using the following technologies:
 
 ### Backend
 
-Here are the tables that were used for the Postgres Database
+Here is the documentation for the API:
+
+Here are the tables that were used for the [Postgres Database](https://github.com/jason1813/chromist-backend/blob/master/prisma/schema.prisma)
 
 **User**
 | Name | Type |
