@@ -2,8 +2,8 @@
 
 [www.chromist.org](http://www.chromist.org/) is a highly functional Christian forum website similar to reddit that allows users to upvote and downvote posts and comments.<br />
 
-[Click here](https://rawcdn.githack.com/jason1813/chromist-backend/e588fb5810d31baa173dfc6a75025b500829be20/api_documentation/api_documentation.html) to see the swagger documentation for the API<br/>
-Note: The html for swagger was created using [this](https://gist.github.com/oseiskar/dbd51a3727fc96dcf5ed189fca491fb3)
+- [API documentation](https://rawcdn.githack.com/jason1813/chromist-backend/e588fb5810d31baa173dfc6a75025b500829be20/api_documentation/api_documentation.html)<br/>
+- [Frontend repo](https://github.com/jason1813/chromist-frontend)
 
 ## The Stack
 
