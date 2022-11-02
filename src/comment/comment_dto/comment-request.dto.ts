@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 class PostCommentBodyDto {
   @IsString()
   @IsNotEmpty()
-  @MaxLength(1000)
+  @MaxLength(6000)
   text: string;
 }
 
